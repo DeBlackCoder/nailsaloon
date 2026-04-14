@@ -2,10 +2,15 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { FaTimes, FaCommentDots, FaPaperPlane } from "react-icons/fa";
 import { GiNails } from "react-icons/gi";
-import dynamic from "next/dynamic";
-import data from "@emoji-mart/data";
 import { toast } from "sonner";
-const Picker = dynamic(() => import("@emoji-mart/react"), { ssr: false });
+
+const EMOJIS = [
+  "😀","😂","😍","🥰","😎","🤩","😭","😅","🤔","😏",
+  "👍","👏","🙌","❤️","🔥","✨","💅","💖","💯","🎉",
+  "😘","🥺","😤","🤣","😇","🙏","💪","👀","🌸","🌈",
+  "😴","🤯","😱","🥳","😋","🤗","😬","🫶","💋","🌺",
+];
+
 
 interface Msg { _id: string; message: string; type?: "text" | "image" | "sticker"; sender: "client" | "admin"; createdAt: string; }
 
@@ -95,15 +100,15 @@ export default function ClientChat() {
     setClientName(nameInput.trim());
   };
 
-  const handleEmojiSelect = (emoji: { native: string }) => {
+  const handleEmojiSelect = (emoji: string) => {
     const el = inputRef.current;
-    if (!el) { setInput(prev => prev + emoji.native); setShowEmojiPicker(false); return; }
+    if (!el) { setInput(prev => prev + emoji); setShowEmojiPicker(false); return; }
     const start = el.selectionStart ?? input.length;
     const end = el.selectionEnd ?? input.length;
-    const newVal = input.slice(0, start) + emoji.native + input.slice(end);
+    const newVal = input.slice(0, start) + emoji + input.slice(end);
     setInput(newVal);
     requestAnimationFrame(() => {
-      el.setSelectionRange(start + emoji.native.length, start + emoji.native.length);
+      el.setSelectionRange(start + emoji.length, start + emoji.length);
       el.focus();
     });
     setShowEmojiPicker(false);
@@ -288,8 +293,14 @@ export default function ClientChat() {
               <div className="bg-[#F0F0F0] px-3 py-2 flex-shrink-0">
                 <div className="relative flex items-center gap-2">
                   {showEmojiPicker && (
-                    <div ref={emojiPickerRef} className="absolute bottom-full left-0 right-0 z-10 mb-1">
-                      <Picker data={data} onEmojiSelect={handleEmojiSelect} theme="dark" previewPosition="none" skinTonePosition="none" />
+                    <div ref={emojiPickerRef} className="absolute bottom-full left-0 right-0 z-10 mb-1 bg-[#222] border border-[#444] rounded-xl p-2 shadow-xl">
+                      <div className="grid grid-cols-8 gap-1 max-h-40 overflow-y-auto">
+                        {EMOJIS.map(e => (
+                          <button key={e} type="button" onClick={() => handleEmojiSelect(e)} className="text-xl p-1 rounded hover:bg-[#333] transition-colors leading-none">
+                            {e}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   )}
                   {showStickerPicker && (
