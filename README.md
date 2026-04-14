@@ -20,3 +20,4 @@ A modern nail technician booking website built with Next.js.
 ```bash
 npm install
 npm run dev# nailtech-remix
+# nailsaloon
