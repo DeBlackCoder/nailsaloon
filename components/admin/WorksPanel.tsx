@@ -5,9 +5,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { FaTrash, FaPlus } from "react-icons/fa";
+import { FaTrash, FaPlus, FaCommentAlt } from "react-icons/fa";
+import WorkComments from "@/components/WorkComments";
 
 interface Work { _id: string; title: string; description: string; imageUrl: string; serviceType?: string; price?: string; }
+type ExpandedComments = Record<string, boolean>;
 
 function AddWorkDialog({ onAdded }: { onAdded: (work: Work) => void }) {
   const [open, setOpen] = useState(false);
@@ -135,6 +137,7 @@ export default function WorksPanel() {
   const [works, setWorks] = useState<Work[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [expanded, setExpanded] = useState<ExpandedComments>({});
 
   useEffect(() => {
     fetch("/api/works")
@@ -190,6 +193,19 @@ export default function WorksPanel() {
                   {w.serviceType && <Badge variant="secondary" className="text-xs">{w.serviceType}</Badge>}
                   {w.price && <Badge variant="brand" className="text-xs">{w.price}</Badge>}
                 </div>
+                <div className="mt-3 flex gap-2">
+                  <button
+                    onClick={() => setExpanded(e => ({ ...e, [w._id]: !e[w._id] }))}
+                    className="flex items-center gap-1 text-xs text-[#6a6a6a] hover:text-[#ff385c] transition-colors"
+                  >
+                    <FaCommentAlt className="text-xs" /> {expanded[w._id] ? "Hide" : "Comments"}
+                  </button>
+                </div>
+                {expanded[w._id] && (
+                  <div className="mt-2 border-t border-[#e8e8e8] pt-3">
+                    <WorkComments workId={w._id} isAdmin />
+                  </div>
+                )}
               </CardContent>
             </Card>
           ))}

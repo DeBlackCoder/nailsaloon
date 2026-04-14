@@ -9,6 +9,7 @@ import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import ScrollToTop from "@/components/ScrollToTop";
 import Chatbot from "@/components/Chatbot";
+import ClientChat from "@/components/ClientChat";
 export default function Home() {
   return (
     <>
@@ -23,6 +24,7 @@ export default function Home() {
       <Footer />
       <ScrollToTop />
       <Chatbot />
+      <ClientChat />
     </>
   );
 }

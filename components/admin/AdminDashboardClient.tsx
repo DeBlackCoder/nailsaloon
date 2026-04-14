@@ -3,15 +3,17 @@ import { useState } from "react";
 import BookingsPanel from "@/components/admin/BookingsPanel";
 import ReviewsPanel from "@/components/admin/ReviewsPanel";
 import WorksPanel from "@/components/admin/WorksPanel";
-import { FaCalendarAlt, FaStar, FaImages, FaArrowLeft, FaSignOutAlt } from "react-icons/fa";
+import ChatPanel from "@/components/admin/ChatPanel";
+import { FaCalendarAlt, FaStar, FaImages, FaArrowLeft, FaSignOutAlt, FaComments } from "react-icons/fa";
 import { GiNails } from "react-icons/gi";
 
-type Tab = "bookings" | "reviews" | "works";
+type Tab = "bookings" | "reviews" | "works" | "chat";
 
 const tabs: { id: Tab; label: string; icon: React.ElementType }[] = [
   { id: "bookings", label: "Bookings",     icon: FaCalendarAlt },
   { id: "reviews",  label: "Reviews",      icon: FaStar },
   { id: "works",    label: "Recent Works", icon: FaImages },
+  { id: "chat",     label: "Chat",         icon: FaComments },
 ];
 
 export default function AdminDashboardClient() {
@@ -67,6 +69,7 @@ export default function AdminDashboardClient() {
         {active === "bookings" && <BookingsPanel />}
         {active === "reviews"  && <ReviewsPanel />}
         {active === "works"    && <WorksPanel />}
+        {active === "chat"     && <ChatPanel />}
       </main>
     </div>
   );
