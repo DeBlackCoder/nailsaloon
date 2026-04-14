@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -117,7 +116,8 @@ function AddWorkDialog({ onAdded }: { onAdded: (work: Work) => void }) {
             )}
             {imageUrl && (
               <div className="mt-2 relative h-24 rounded-lg overflow-hidden">
-                <Image src={imageUrl} alt="Preview" fill className="object-cover" sizes="400px" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={imageUrl} alt="Preview" className="w-full h-full object-cover rounded-lg" />
               </div>
             )}
           </div>
@@ -178,8 +178,9 @@ export default function WorksPanel() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {works.map(w => (
             <Card key={w._id} className="group overflow-hidden">
-              <div className="relative aspect-square">
-                <Image src={w.imageUrl} alt={w.title} fill className="object-cover" sizes="(max-width: 640px) 100vw, 33vw" />
+              <div className="relative aspect-square overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={w.imageUrl} alt={w.title} className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100">
                   <button onClick={() => deleteWork(w._id)} className="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-red-600 transition-colors flex items-center gap-1">
                     <FaTrash className="text-xs" /> Delete

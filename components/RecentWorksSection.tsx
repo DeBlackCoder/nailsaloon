@@ -1,13 +1,14 @@
+import { connectDB } from "@/lib/mongodb";
+import RecentWork from "@/models/RecentWork";
 import RecentWorksClient from "@/components/RecentWorksClient";
 
 interface Work { _id: string; title: string; description: string; imageUrl: string; serviceType?: string; price?: string; likes?: number; }
 
 async function getWorks(): Promise<Work[]> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-    const res = await fetch(`${baseUrl}/api/works`, { cache: "no-store" });
-    if (!res.ok) return [];
-    return res.json();
+    await connectDB();
+    const works = await RecentWork.find({}).sort({ createdAt: -1 }).lean();
+    return JSON.parse(JSON.stringify(works));
   } catch {
     return [];
   }

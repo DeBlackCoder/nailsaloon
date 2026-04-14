@@ -1,6 +1,5 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
-import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import WorkComments, { WorkActionBar } from "@/components/WorkComments";
 import { FaTimes } from "react-icons/fa";
@@ -51,15 +50,14 @@ export default function RecentWorksClient({ works }: { works: Work[] }) {
             <div key={work._id} className="bg-white rounded-[20px] overflow-hidden shadow-sm">
               {/* Image */}
               <div
-                className={`relative group cursor-pointer ${i === 0 ? "aspect-[16/7]" : "aspect-[16/9]"}`}
+                className={`relative group cursor-pointer overflow-hidden ${i === 0 ? "aspect-[16/7]" : "aspect-[16/9]"}`}
                 onClick={() => toggleComments(work._id)}
               >
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={work.imageUrl}
                   alt={work.title}
-                  fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  sizes="(max-width: 768px) 100vw, 900px"
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
 
