@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { GiNails } from "react-icons/gi";
+import { FaArrowLeft } from "react-icons/fa";
 
 const SESSION_KEY = "admin_authed";
 
@@ -40,7 +42,9 @@ export default function AdminAuthGate({ children }: { children: React.ReactNode 
     <div className="min-h-screen bg-[#f2f2f2] flex items-center justify-center px-4">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center pb-2">
-          <div className="text-4xl mb-2">💅</div>
+          <div className="flex justify-center mb-2">
+            <GiNails className="text-5xl text-[#ff385c]" />
+          </div>
           <CardTitle className="text-xl">Admin Access</CardTitle>
           <p className="text-sm text-[#6a6a6a] mt-1">Enter the admin password to continue</p>
         </CardHeader>
@@ -60,8 +64,8 @@ export default function AdminAuthGate({ children }: { children: React.ReactNode 
             <Button type="submit" variant="brand" className="w-full rounded-full" disabled={loading}>
               {loading ? "Checking..." : "Enter"}
             </Button>
-            <a href="/" className="text-xs text-center text-[#6a6a6a] hover:text-[#ff385c] transition-colors">
-              ← Back to site
+            <a href="/" className="flex items-center justify-center gap-1 text-xs text-[#6a6a6a] hover:text-[#ff385c] transition-colors">
+              <FaArrowLeft className="text-xs" /> Back to site
             </a>
           </form>
         </CardContent>

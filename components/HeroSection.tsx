@@ -1,5 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { FaTrophy, FaCheckCircle } from "react-icons/fa";
+import { AiFillStar } from "react-icons/ai";
 
 export default function HeroSection() {
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -64,17 +66,19 @@ export default function HeroSection() {
           style={{ animationDelay: "0.6s" }}
         >
           <div className="flex items-center gap-1.5">
-            <span className="text-amber-400 text-base">★★★★★</span>
+            <div className="flex text-amber-400">
+              {[...Array(5)].map((_, i) => <AiFillStar key={i} />)}
+            </div>
             <span>5-star rated</span>
           </div>
           <div className="w-px h-4 bg-white/30 hidden sm:block" />
           <div className="flex items-center gap-1.5">
-            <span>🏆</span>
+            <FaTrophy className="text-amber-400" />
             <span>5+ years experience</span>
           </div>
           <div className="w-px h-4 bg-white/30 hidden sm:block" />
           <div className="flex items-center gap-1.5">
-            <span>✅</span>
+            <FaCheckCircle className="text-green-400" />
             <span>No account needed</span>
           </div>
         </div>

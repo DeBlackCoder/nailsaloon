@@ -4,6 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { GiNails } from "react-icons/gi";
+import { FaCalendarAlt, FaClock, FaTrash, FaCheck, FaUndo } from "react-icons/fa";
 
 interface Booking {
   _id: string; name: string; phone: string; service: string;
@@ -96,13 +98,13 @@ export default function BookingsPanel() {
                 </div>
                 <div className="flex flex-wrap gap-2 mb-3 text-sm">
                   <span data-testid="booking-service" className="flex items-center gap-1 text-[#222222]">
-                    💅 <span>{b.service}</span>
+                    <GiNails className="text-[#ff385c]" /> <span>{b.service}</span>
                   </span>
                   <span data-testid="booking-date" className="flex items-center gap-1 text-[#6a6a6a]">
-                    📅 {b.date}
+                    <FaCalendarAlt className="text-xs" /> {b.date}
                   </span>
                   <span data-testid="booking-time" className="flex items-center gap-1 text-[#6a6a6a]">
-                    🕐 {b.time}
+                    <FaClock className="text-xs" /> {b.time}
                   </span>
                 </div>
                 {b.notes && (
@@ -110,32 +112,16 @@ export default function BookingsPanel() {
                 )}
                 <div className="flex gap-2 flex-wrap">
                   {b.status === "pending" ? (
-                    <Button
-                      data-testid="mark-completed-button"
-                      size="sm"
-                      variant="secondary"
-                      onClick={() => updateStatus(b._id, "completed")}
-                    >
-                      ✓ Mark Completed
+                    <Button data-testid="mark-completed-button" size="sm" variant="secondary" onClick={() => updateStatus(b._id, "completed")}>
+                      <FaCheck className="mr-1 text-xs" /> Mark Completed
                     </Button>
                   ) : (
-                    <Button
-                      data-testid="mark-pending-button"
-                      size="sm"
-                      variant="outline"
-                      onClick={() => updateStatus(b._id, "pending")}
-                    >
-                      ↩ Mark Pending
+                    <Button data-testid="mark-pending-button" size="sm" variant="outline" onClick={() => updateStatus(b._id, "pending")}>
+                      <FaUndo className="mr-1 text-xs" /> Mark Pending
                     </Button>
                   )}
-                  <Button
-                    data-testid="delete-booking-button"
-                    size="sm"
-                    variant="ghost"
-                    className="text-red-500 hover:text-red-600 hover:bg-red-50"
-                    onClick={() => deleteBooking(b._id)}
-                  >
-                    🗑 Delete
+                  <Button data-testid="delete-booking-button" size="sm" variant="ghost" className="text-red-500 hover:text-red-600 hover:bg-red-50" onClick={() => deleteBooking(b._id)}>
+                    <FaTrash className="mr-1 text-xs" /> Delete
                   </Button>
                 </div>
               </CardContent>

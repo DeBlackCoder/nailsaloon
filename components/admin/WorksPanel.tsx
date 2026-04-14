@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { FaTrash, FaPlus } from "react-icons/fa";
 
 interface Work { _id: string; title: string; description: string; imageUrl: string; serviceType?: string; price?: string; }
 
@@ -52,8 +53,8 @@ function AddWorkDialog({ onAdded }: { onAdded: (work: Work) => void }) {
 
   if (!open) {
     return (
-      <Button variant="brand" onClick={() => setOpen(true)} className="rounded-full">
-        + Add Work
+      <Button variant="brand" onClick={() => setOpen(true)} className="rounded-full flex items-center gap-2">
+        <FaPlus className="text-xs" /> Add Work
       </Button>
     );
   }
@@ -177,11 +178,8 @@ export default function WorksPanel() {
               <div className="relative aspect-square">
                 <Image src={w.imageUrl} alt={w.title} fill className="object-cover" sizes="(max-width: 640px) 100vw, 33vw" />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                  <button
-                    onClick={() => deleteWork(w._id)}
-                    className="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-red-600 transition-colors"
-                  >
-                    🗑 Delete
+                  <button onClick={() => deleteWork(w._id)} className="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-red-600 transition-colors flex items-center gap-1">
+                    <FaTrash className="text-xs" /> Delete
                   </button>
                 </div>
               </div>

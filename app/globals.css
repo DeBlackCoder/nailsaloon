@@ -22,6 +22,27 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f2f2f2;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb {
+  background: #ff385c;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #e00b41;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #ff385c #f2f2f2;
+}
+
 body {
   background: white;
   color: #222222;
@@ -71,3 +92,24 @@ body {
 .animate-bubble-in    { animation: bubbleIn 0.25s ease both; }
 .animate-scroll-dot   { animation: scrollDot 1.6s ease-in-out infinite; }
 .animate-typing-dot   { animation: typingDot 1.2s ease-in-out infinite; }
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  animation: marquee 30s linear infinite;
+  width: max-content;
+}
+
+.animate-marquee:hover,
+.animate-marquee.paused {
+  animation-play-state: paused;
+}
+
+.marquee-wrapper {
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+}

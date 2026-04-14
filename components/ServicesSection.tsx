@@ -1,6 +1,7 @@
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { GiDiamondRing, GiNails, GiFootprint, GiPaintBrush } from "react-icons/gi";
+import { IconType } from "react-icons";
 
 export interface Service {
   id: string;
@@ -8,14 +9,14 @@ export interface Service {
   price: string;
   duration: string;
   description: string;
-  emoji: string;
+  icon: IconType;
 }
 
 export const services: Service[] = [
-  { id: "Acrylic",  name: "Acrylic",   price: "$45", duration: "75 min", description: "Long-lasting acrylic extensions with a flawless finish.", emoji: "💎" },
-  { id: "Gel",      name: "Gel",       price: "$35", duration: "60 min", description: "Glossy gel polish that stays chip-free for weeks.",       emoji: "✨" },
-  { id: "Pedicure", name: "Pedicure",  price: "$40", duration: "60 min", description: "Relaxing pedicure with exfoliation and polish.",           emoji: "🦶" },
-  { id: "Nail Art", name: "Nail Art",  price: "$55", duration: "90 min", description: "Custom nail art designs tailored to your style.",          emoji: "🎨" },
+  { id: "Acrylic",  name: "Acrylic",   price: "$45", duration: "75 min", description: "Long-lasting acrylic extensions with a flawless finish.", icon: GiDiamondRing },
+  { id: "Gel",      name: "Gel",       price: "$35", duration: "60 min", description: "Glossy gel polish that stays chip-free for weeks.",       icon: GiNails },
+  { id: "Pedicure", name: "Pedicure",  price: "$40", duration: "60 min", description: "Relaxing pedicure with exfoliation and polish.",           icon: GiFootprint },
+  { id: "Nail Art", name: "Nail Art",  price: "$55", duration: "90 min", description: "Custom nail art designs tailored to your style.",          icon: GiPaintBrush },
 ];
 
 export default function ServicesSection() {
@@ -36,7 +37,7 @@ export default function ServicesSection() {
               style={{ boxShadow: "rgba(0,0,0,0.02) 0px 0px 0px 1px, rgba(0,0,0,0.04) 0px 2px 6px, rgba(0,0,0,0.1) 0px 4px 8px" }}
             >
               <CardHeader className="pb-2 sm:pb-3">
-                <div className="text-3xl sm:text-4xl mb-2 sm:mb-3">{service.emoji}</div>
+                <service.icon className="text-3xl sm:text-4xl mb-2 sm:mb-3 text-[#ff385c]" />
                 <CardTitle data-testid="service-name" className="text-base sm:text-lg">{service.name}</CardTitle>
               </CardHeader>
               <CardContent className="pb-2 sm:pb-3">

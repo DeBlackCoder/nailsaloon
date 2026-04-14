@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { FaTrash } from "react-icons/fa";
 
 interface Review { _id: string; name: string; message: string; rating?: number; createdAt: string; }
 
@@ -65,13 +66,8 @@ export default function ReviewsPanel() {
                   )}
                 </div>
                 <p className="text-sm text-[#6a6a6a] leading-relaxed mb-4">{r.message}</p>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="text-red-500 hover:text-red-600 hover:bg-red-50 w-full"
-                  onClick={() => deleteReview(r._id)}
-                >
-                  🗑 Delete Review
+                <Button size="sm" variant="ghost" className="text-red-500 hover:text-red-600 hover:bg-red-50 w-full" onClick={() => deleteReview(r._id)}>
+                  <FaTrash className="mr-1 text-xs" /> Delete Review
                 </Button>
               </CardContent>
             </Card>

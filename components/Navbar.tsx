@@ -3,15 +3,17 @@ import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { Menu, X, Search } from "lucide-react";
+import { GiNails } from "react-icons/gi";
+import { FaHome, FaConciergeBell, FaCalendarAlt, FaImages, FaStar, FaInfoCircle, FaEnvelope } from "react-icons/fa";
 
 const navLinks = [
-  { id: "home",     label: "Home",     icon: "", href: "#home" },
-  { id: "services", label: "Services", icon: "", href: "#services" },
-  { id: "booking",  label: "Book",     icon: "", href: "#booking" },
-  { id: "works",    label: "Works",    icon: "", href: "#works" },
-  { id: "reviews",  label: "Reviews",  icon: "", href: "#reviews" },
-  { id: "about",    label: "About",    icon: "", href: "#about" },
-  { id: "contact",  label: "Contact",  icon: "", href: "#contact" },
+  { id: "home",     label: "Home",     icon: FaHome,          href: "#home" },
+  { id: "services", label: "Services", icon: FaConciergeBell, href: "#services" },
+  { id: "booking",  label: "Book",     icon: FaCalendarAlt,   href: "#booking" },
+  { id: "works",    label: "Works",    icon: FaImages,        href: "#works" },
+  { id: "reviews",  label: "Reviews",  icon: FaStar,          href: "#reviews" },
+  { id: "about",    label: "About",    icon: FaInfoCircle,    href: "#about" },
+  { id: "contact",  label: "Contact",  icon: FaEnvelope,      href: "#contact" },
 ];
 
 export default function Navbar() {
@@ -64,7 +66,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <button onClick={() => scrollTo("#home")} className="flex items-center gap-2 focus:outline-none">
-            <span className={`transition-all duration-300 ${scrolled ? "text-2xl" : "text-4xl"}`}>💅</span>
+            <GiNails className={`transition-all duration-300 ${scrolled ? "text-2xl text-[#ff385c]" : "text-4xl text-white"}`} />
             {(!scrolled || heroNameGone) && (
               <span className={`font-bold text-lg transition-all duration-300 ${scrolled ? "text-[#222222]" : "text-white"}`}>
                 Nail Studio
@@ -86,7 +88,7 @@ export default function Navbar() {
                         : "text-white/80 hover:text-white hover:bg-white/10"
                     }`}
                   >
-                    <span>{link.icon}</span>
+                    <link.icon className="text-xs" />
                     <span>{link.label}</span>
                   </button>
                 ))}
@@ -133,7 +135,7 @@ export default function Navbar() {
             <SheetContent side="right">
               <SheetHeader>
                 <SheetTitle className="flex items-center gap-2">
-                  <span className="text-2xl"></span> Nail Studio
+                  <GiNails className="text-2xl text-[#ff385c]" /> Nail Studio
                 </SheetTitle>
               </SheetHeader>
               <nav className="flex flex-col gap-1 p-4">
@@ -147,7 +149,7 @@ export default function Navbar() {
                           : "text-[#222222] hover:bg-[#f2f2f2]"
                       }`}
                     >
-                      <span className="text-lg">{link.icon}</span>
+                      <link.icon className="text-lg" />
                       {link.label}
                     </button>
                   </SheetClose>

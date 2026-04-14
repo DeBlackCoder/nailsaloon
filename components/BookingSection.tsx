@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { services } from "@/components/ServicesSection";
 import { toast } from "sonner";
+import { FaBolt, FaLock, FaWhatsapp, FaPaintBrush } from "react-icons/fa";
+import { IconType } from "react-icons";
 
 interface FormState {
   name: string; phone: string; service: string; date: string; time: string; notes: string;
@@ -14,11 +16,11 @@ interface FormErrors {
 
 const timeSlots = ["9:00 AM","10:00 AM","11:00 AM","12:00 PM","1:00 PM","2:00 PM","3:00 PM","4:00 PM","5:00 PM"];
 
-const perks = [
-  { icon: "⚡", title: "Instant Confirmation", desc: "Get confirmed right away" },
-  { icon: "🔒", title: "No Account Needed",    desc: "Just fill and book" },
-  { icon: "💬", title: "WhatsApp Updates",     desc: "We'll keep you posted" },
-  { icon: "🎨", title: "Custom Requests",      desc: "Tell us your vision" },
+const perks: { icon: IconType; title: string; desc: string }[] = [
+  { icon: FaBolt,       title: "Instant Confirmation", desc: "Get confirmed right away" },
+  { icon: FaLock,       title: "No Account Needed",    desc: "Just fill and book" },
+  { icon: FaWhatsapp,   title: "WhatsApp Updates",     desc: "We'll keep you posted" },
+  { icon: FaPaintBrush, title: "Custom Requests",      desc: "Tell us your vision" },
 ];
 
 export default function BookingSection() {
@@ -74,13 +76,12 @@ export default function BookingSection() {
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           {/* Left column */}
           <div className="lg:col-span-2 flex flex-col gap-6">
-            {/* Why book with us */}
             <Card>
               <CardHeader><CardTitle>Why Book With Us</CardTitle></CardHeader>
               <CardContent className="grid grid-cols-1 gap-4">
                 {perks.map(p => (
                   <div key={p.title} className="flex items-start gap-3">
-                    <span className="text-2xl">{p.icon}</span>
+                    <p.icon className="text-xl text-[#ff385c] mt-0.5 flex-shrink-0" />
                     <div>
                       <div className="font-semibold text-sm text-[#222222]">{p.title}</div>
                       <div className="text-xs text-[#6a6a6a]">{p.desc}</div>
@@ -90,14 +91,13 @@ export default function BookingSection() {
               </CardContent>
             </Card>
 
-            {/* Services quick ref */}
             <div className="rounded-[20px] bg-[#222222] p-6 text-white">
               <h3 className="font-bold text-base mb-4">Services & Pricing</h3>
               <div className="flex flex-col gap-3">
                 {services.map(s => (
                   <div key={s.id} className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span>{s.emoji}</span>
+                      <s.icon className="text-[#ff385c]" />
                       <span className="text-sm">{s.name}</span>
                     </div>
                     <div className="text-right">
@@ -114,7 +114,6 @@ export default function BookingSection() {
           <Card className="lg:col-span-3">
             <CardContent className="p-6">
               <form data-testid="booking-form" onSubmit={handleSubmit} className="flex flex-col gap-5">
-                {/* Name */}
                 <div className="relative">
                   <input
                     data-testid="field-name"
@@ -130,7 +129,6 @@ export default function BookingSection() {
                   {errors.name && <p data-testid="error-name" className="text-xs text-red-500 mt-1">{errors.name}</p>}
                 </div>
 
-                {/* Phone */}
                 <div className="relative">
                   <input
                     data-testid="field-phone"
@@ -146,7 +144,6 @@ export default function BookingSection() {
                   {errors.phone && <p data-testid="error-phone" className="text-xs text-red-500 mt-1">{errors.phone}</p>}
                 </div>
 
-                {/* Service selector */}
                 <div>
                   <p className="text-xs text-[#6a6a6a] mb-2 font-medium">Select Service *</p>
                   <input type="hidden" data-testid="field-service" value={form.service} readOnly />
@@ -162,7 +159,7 @@ export default function BookingSection() {
                             : "border-[#c1c1c1] bg-white text-[#222222] hover:border-[#ff385c]/50"
                         }`}
                       >
-                        <span>{s.emoji}</span>
+                        <s.icon className="text-base flex-shrink-0" />
                         <div className="text-left">
                           <div className="text-xs font-semibold">{s.name}</div>
                           <div className="text-xs text-[#6a6a6a]">{s.price} · {s.duration}</div>
@@ -173,7 +170,6 @@ export default function BookingSection() {
                   {errors.service && <p data-testid="error-service" className="text-xs text-red-500 mt-1">{errors.service}</p>}
                 </div>
 
-                {/* Date & Time */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="relative">
                     <input
@@ -204,7 +200,6 @@ export default function BookingSection() {
                   </div>
                 </div>
 
-                {/* Notes */}
                 <div className="relative">
                   <textarea
                     data-testid="field-notes"

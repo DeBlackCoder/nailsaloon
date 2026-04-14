@@ -3,13 +3,15 @@ import { useState } from "react";
 import BookingsPanel from "@/components/admin/BookingsPanel";
 import ReviewsPanel from "@/components/admin/ReviewsPanel";
 import WorksPanel from "@/components/admin/WorksPanel";
+import { FaCalendarAlt, FaStar, FaImages, FaArrowLeft, FaSignOutAlt } from "react-icons/fa";
+import { GiNails } from "react-icons/gi";
 
 type Tab = "bookings" | "reviews" | "works";
 
-const tabs: { id: Tab; label: string; icon: string }[] = [
-  { id: "bookings", label: "Bookings",     icon: "📅" },
-  { id: "reviews",  label: "Reviews",      icon: "⭐" },
-  { id: "works",    label: "Recent Works", icon: "🖼️" },
+const tabs: { id: Tab; label: string; icon: React.ElementType }[] = [
+  { id: "bookings", label: "Bookings",     icon: FaCalendarAlt },
+  { id: "reviews",  label: "Reviews",      icon: FaStar },
+  { id: "works",    label: "Recent Works", icon: FaImages },
 ];
 
 export default function AdminDashboardClient() {
@@ -26,18 +28,18 @@ export default function AdminDashboardClient() {
       <header className="sticky top-0 z-40 bg-white border-b border-[#c1c1c1] shadow-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-2xl">💅</span>
+            <GiNails className="text-2xl text-[#ff385c]" />
             <span className="font-bold text-[#222222]">Admin Dashboard</span>
           </div>
           <div className="flex items-center gap-3">
-            <a href="/" className="text-sm text-[#6a6a6a] hover:text-[#ff385c] transition-colors font-medium">
-              ← View Site
+            <a href="/" className="flex items-center gap-1 text-sm text-[#6a6a6a] hover:text-[#ff385c] transition-colors font-medium">
+              <FaArrowLeft className="text-xs" /> View Site
             </a>
             <button
               onClick={handleLogout}
-              className="text-sm font-medium px-3 py-1.5 rounded-full border border-red-200 text-red-500 hover:bg-red-50 transition-colors"
+              className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-full border border-red-200 text-red-500 hover:bg-red-50 transition-colors"
             >
-              Logout
+              <FaSignOutAlt className="text-xs" /> Logout
             </button>
           </div>
         </div>
@@ -53,7 +55,7 @@ export default function AdminDashboardClient() {
                   : "border-transparent text-[#6a6a6a] hover:text-[#222222]"
               }`}
             >
-              <span>{tab.icon}</span>
+              <tab.icon className="text-sm" />
               {tab.label}
             </button>
           ))}

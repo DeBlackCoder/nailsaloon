@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { FaPhone, FaWhatsapp, FaInstagram, FaClock } from "react-icons/fa";
 
 export default function ContactSection() {
   const [name, setName] = useState("");
@@ -19,7 +20,6 @@ export default function ContactSection() {
     if (!message.trim()) { setMsgErr("Message is required"); valid = false; }
     if (!valid) return;
     setLoading(true);
-    // Simulate send
     await new Promise(r => setTimeout(r, 800));
     toast.success("Message sent! We'll get back to you soon.");
     setName(""); setMessage("");
@@ -35,27 +35,26 @@ export default function ContactSection() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left: contact info */}
           <div className="flex flex-col gap-6">
             <Card>
               <CardHeader><CardTitle>Contact Us</CardTitle></CardHeader>
               <CardContent className="flex flex-col gap-4">
                 <a href="tel:+1234567890" className="flex items-center gap-3 text-[#222222] hover:text-[#ff385c] transition-colors">
-                  <span className="text-2xl">📞</span>
+                  <FaPhone className="text-xl text-[#ff385c]" />
                   <div>
                     <div className="font-medium text-sm">Phone</div>
                     <div className="text-[#6a6a6a] text-sm">+1 (234) 567-890</div>
                   </div>
                 </a>
                 <a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-[#222222] hover:text-[#ff385c] transition-colors">
-                  <span className="text-2xl">💬</span>
+                  <FaWhatsapp className="text-xl text-[#25D366]" />
                   <div>
                     <div className="font-medium text-sm">WhatsApp</div>
                     <div className="text-[#6a6a6a] text-sm">Chat with us directly</div>
                   </div>
                 </a>
                 <a href="https://instagram.com/nailstudio" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-[#222222] hover:text-[#ff385c] transition-colors">
-                  <span className="text-2xl">📸</span>
+                  <FaInstagram className="text-xl text-[#E1306C]" />
                   <div>
                     <div className="font-medium text-sm">Instagram</div>
                     <div className="text-[#6a6a6a] text-sm">@nailstudio</div>
@@ -64,9 +63,10 @@ export default function ContactSection() {
               </CardContent>
             </Card>
 
-            {/* Hours */}
             <div className="rounded-[20px] bg-[#222222] p-6 text-white">
-              <h3 className="font-bold text-base mb-4">🕐 Business Hours</h3>
+              <h3 className="font-bold text-base mb-4 flex items-center gap-2">
+                <FaClock className="text-[#ff385c]" /> Business Hours
+              </h3>
               <div className="flex flex-col gap-2 text-sm">
                 {[
                   { day: "Monday – Friday", hours: "9:00 AM – 6:00 PM" },
@@ -82,7 +82,6 @@ export default function ContactSection() {
             </div>
           </div>
 
-          {/* Right: message form */}
           <Card>
             <CardHeader><CardTitle>Send a Message</CardTitle></CardHeader>
             <CardContent>
