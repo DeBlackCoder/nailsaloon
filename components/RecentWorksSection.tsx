@@ -2,6 +2,8 @@ import { connectDB } from "@/lib/mongodb";
 import RecentWork from "@/models/RecentWork";
 import RecentWorksClient from "@/components/RecentWorksClient";
 
+export const dynamic = "force-dynamic";
+
 interface Work { _id: string; title: string; description: string; imageUrl: string; serviceType?: string; price?: string; likes?: number; }
 
 async function getWorks(): Promise<Work[]> {
