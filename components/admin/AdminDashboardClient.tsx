@@ -15,6 +15,11 @@ const tabs: { id: Tab; label: string; icon: string }[] = [
 export default function AdminDashboardClient() {
   const [active, setActive] = useState<Tab>("bookings");
 
+  const handleLogout = () => {
+    sessionStorage.removeItem("admin_authed");
+    window.location.reload();
+  };
+
   return (
     <div className="min-h-screen bg-[#f2f2f2]">
       {/* Sticky header */}
@@ -24,12 +29,17 @@ export default function AdminDashboardClient() {
             <span className="text-2xl">💅</span>
             <span className="font-bold text-[#222222]">Admin Dashboard</span>
           </div>
-          <a
-            href="/"
-            className="text-sm text-[#6a6a6a] hover:text-[#ff385c] transition-colors font-medium"
-          >
-            ← View Site
-          </a>
+          <div className="flex items-center gap-3">
+            <a href="/" className="text-sm text-[#6a6a6a] hover:text-[#ff385c] transition-colors font-medium">
+              ← View Site
+            </a>
+            <button
+              onClick={handleLogout}
+              className="text-sm text-[#6a6a6a] hover:text-red-500 transition-colors font-medium"
+            >
+              Logout
+            </button>
+          </div>
         </div>
         {/* Tabs */}
         <div className="max-w-6xl mx-auto px-4 sm:px-6 flex gap-1 pb-0 overflow-x-auto">
