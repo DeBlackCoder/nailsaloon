@@ -174,7 +174,7 @@ export default function BookingSection() {
                 </div>
 
                 {/* Date & Time */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="relative">
                     <input
                       data-testid="field-date"

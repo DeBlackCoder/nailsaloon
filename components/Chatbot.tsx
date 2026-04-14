@@ -263,7 +263,7 @@ export default function Chatbot() {
 
       {/* Chat window */}
       {open && (
-        <div className="fixed bottom-24 left-6 z-50 w-80 max-h-[520px] flex flex-col rounded-[20px] bg-white shadow-2xl border border-[#e8e8e8] animate-bubble-in overflow-hidden">
+        <div className="fixed bottom-24 left-2 right-2 sm:left-6 sm:right-auto z-50 sm:w-80 max-h-[70vh] sm:max-h-[520px] flex flex-col rounded-[20px] bg-white shadow-2xl border border-[#e8e8e8] animate-bubble-in overflow-hidden">
           {/* Header */}
           <div className="bg-[#ff385c] px-4 py-3 flex items-center gap-3">
             <span className="text-2xl">💅</span>

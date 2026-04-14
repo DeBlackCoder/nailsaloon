@@ -84,7 +84,7 @@ export default function BookingsPanel() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {bookings.map(b => (
             <Card key={b._id} data-testid="booking-card">
-              <CardContent className="p-5">
+              <CardContent className="p-4 sm:p-5">
                 <div className="flex items-start justify-between mb-3">
                   <div>
                     <p data-testid="booking-name" className="font-semibold text-[#222222]">{b.name}</p>

@@ -32,7 +32,7 @@ export default function AboutSection() {
 
           {/* Right: card */}
           <Card>
-            <CardContent className="p-8">
+            <CardContent className="p-5 sm:p-8">
               <h3 className="text-2xl font-bold text-[#222222] mb-4">Hi, I&apos;m Sofia 👋</h3>
               <p className="text-[#6a6a6a] leading-relaxed mb-4">
                 I&apos;m a certified nail technician with over 5 years of experience transforming nails into works of art.

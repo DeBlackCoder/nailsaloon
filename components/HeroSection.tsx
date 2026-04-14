@@ -8,7 +8,7 @@ export default function HeroSection() {
     <section
       id="home"
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
-      style={{ height: "100dvh", paddingTop: "160px" }}
+      style={{ height: "100dvh", paddingTop: "120px" }}
     >
       {/* Background image */}
       <div
@@ -22,14 +22,14 @@ export default function HeroSection() {
       <div className="relative z-10 text-center text-white px-4 max-w-3xl mx-auto">
         <h1
           data-testid="hero-business-name"
-          className="text-5xl md:text-7xl font-bold mb-4 animate-hero-slide-up"
+          className="text-4xl sm:text-5xl md:text-7xl font-bold mb-4 animate-hero-slide-up"
           style={{ animationDelay: "0.1s" }}
         >
           Nail Studio
         </h1>
         <p
           data-testid="hero-tagline"
-          className="text-xl md:text-2xl text-white/90 mb-8 animate-hero-slide-up"
+          className="text-lg md:text-2xl text-white/90 mb-8 animate-hero-slide-up"
           style={{ animationDelay: "0.25s" }}
         >
           Where Beauty Meets Precision
@@ -43,7 +43,7 @@ export default function HeroSection() {
             data-testid="hero-cta"
             variant="brand"
             size="lg"
-            className="rounded-full px-10 text-base font-semibold shadow-lg"
+            className="rounded-full px-8 text-base font-semibold shadow-lg w-full sm:w-auto"
             onClick={() => scrollTo("booking")}
           >
             Book Now
@@ -51,7 +51,7 @@ export default function HeroSection() {
           <Button
             variant="outline"
             size="lg"
-            className="rounded-full px-10 text-base font-semibold bg-white/10 border-white/40 text-white hover:bg-white/20"
+            className="rounded-full px-8 text-base font-semibold bg-white/10 border-white/40 text-white hover:bg-white/20 w-full sm:w-auto"
             onClick={() => scrollTo("services")}
           >
             Explore Services
