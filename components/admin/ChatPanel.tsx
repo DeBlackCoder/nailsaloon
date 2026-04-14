@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { FaPaperPlane, FaCircle } from "react-icons/fa";
-import { GiNails } from "react-icons/gi";
+import { GiHairStrands } from "react-icons/gi";
 
 interface Conversation {
   _id: string; // clientId
@@ -92,7 +92,7 @@ export default function ChatPanel() {
       {/* Sidebar — conversation list */}
       <div className={`${selected ? "hidden sm:flex" : "flex"} w-full sm:w-72 border-r border-[#e8e8e8] flex-col`}>
         <div className="bg-[#222222] px-4 py-3 flex items-center gap-2">
-          <GiNails className="text-white text-xl" />
+          <GiHairStrands className="text-white text-xl" />
           <span className="text-white font-semibold text-sm">Chats</span>
           {totalUnread > 0 && (
             <span className="ml-auto bg-[#222222] text-white text-xs font-bold px-2 py-0.5 rounded-full">{totalUnread}</span>
@@ -136,7 +136,7 @@ export default function ChatPanel() {
       {!selected ? (
         <div className="hidden sm:flex flex-1 items-center justify-center bg-[#1a1a1a]">
           <div className="text-center text-[#6a6a6a]">
-            <GiNails className="text-5xl text-[#c1c1c1] mx-auto mb-3" />
+            <GiHairStrands className="text-5xl text-[#c1c1c1] mx-auto mb-3" />
             <p className="text-sm">Select a conversation to start chatting</p>
           </div>
         </div>

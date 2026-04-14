@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { Menu, X, Search } from "lucide-react";
-import { GiNails } from "react-icons/gi";
+import { GiHairStrands } from "react-icons/gi";
 import { FaHome, FaConciergeBell, FaCalendarAlt, FaImages, FaStar, FaInfoCircle, FaEnvelope } from "react-icons/fa";
 
 const navLinks = [
@@ -66,10 +66,10 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <button onClick={() => scrollTo("#home")} className="flex items-center gap-2 focus:outline-none">
-            <GiNails className={`transition-all duration-300 ${scrolled ? "text-2xl text-[#ff385c]" : "text-4xl text-white"}`} />
+            <GiHairStrands className={`transition-all duration-300 ${scrolled ? "text-2xl text-[#ff385c]" : "text-4xl text-white"}`} />
             {(!scrolled || heroNameGone) && (
               <span className={`font-bold text-lg transition-all duration-300 ${scrolled ? "text-[#222222]" : "text-white"}`}>
-                Nail Studio
+                Bright Beautician
               </span>
             )}
           </button>
@@ -135,7 +135,7 @@ export default function Navbar() {
             <SheetContent side="right">
               <SheetHeader>
                 <SheetTitle className="flex items-center gap-2">
-                  <GiNails className="text-2xl text-[#ff385c]" /> Nail Studio
+                  <GiHairStrands className="text-2xl text-[#ff385c]" /> Bright Beautician
                 </SheetTitle>
               </SheetHeader>
               <nav className="flex flex-col gap-1 p-4">
@@ -174,7 +174,7 @@ export default function Navbar() {
               <input
                 value={searchService}
                 onChange={e => setSearchService(e.target.value)}
-                placeholder="Any service"
+                placeholder="Any style"
                 className="w-full text-sm text-[#6a6a6a] outline-none bg-transparent"
               />
             </div>

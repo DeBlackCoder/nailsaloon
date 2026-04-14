@@ -1,8 +1,7 @@
 "use client";
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
-import { FaHeart, FaRegHeart, FaReply, FaTrash } from "react-icons/fa";
+import { FaHeart, FaRegHeart, FaTrash } from "react-icons/fa";
 import { BiComment } from "react-icons/bi";
 
 export interface WorkComment {
@@ -13,66 +12,65 @@ export interface WorkComment {
   likes: number;
   adminReply?: string;
   createdAt: string;
+  parentId?: string;
 }
 
-function getInitials(name: string) { return name.trim().charAt(0).toUpperCase(); }
+const NAME_KEY = "bb_commenter_name";
+
+function getInitials(n: string) { return n.trim().charAt(0).toUpperCase(); }
 const COLORS = ["bg-pink-400","bg-purple-400","bg-indigo-400","bg-rose-400","bg-fuchsia-400","bg-violet-400"];
-function avatarColor(name: string) { return COLORS[name.charCodeAt(0) % COLORS.length]; }
+function avatarColor(n: string) { return COLORS[n.charCodeAt(0) % COLORS.length]; }
 function timeAgo(iso: string) {
   const s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
   if (s < 60) return `${s}s`;
-  if (s < 3600) return `${Math.floor(s/60)}m`;
-  if (s < 86400) return `${Math.floor(s/3600)}h`;
+  if (s < 3600) return `${Math.floor(s / 60)}m`;
+  if (s < 86400) return `${Math.floor(s / 3600)}h`;
   return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-// ── Inline Twitter-style action bar shown on each work card ──────────────────
-export function WorkActionBar({ workId, initialLikes = 0, onCommentClick }: { workId: string; initialLikes?: number; onCommentClick: () => void }) {
+// ── WorkActionBar — unchanged ─────────────────────────────────────────────────
+export function WorkActionBar({
+  workId,
+  initialLikes = 0,
+  onCommentClick,
+}: {
+  workId: string;
+  initialLikes?: number;
+  onCommentClick: () => void;
+}) {
   const [likes, setLikes] = useState(initialLikes);
   const [commentCount, setCommentCount] = useState(0);
   const [liked, setLiked] = useState(false);
 
   useEffect(() => {
-    // Fetch comment count only (not likes — work-level likes come from the work object)
     fetch(`/api/works/${workId}/comments`)
       .then(r => r.json())
-      .then((d: WorkComment[]) => {
-        if (!Array.isArray(d)) return;
-        setCommentCount(d.length);
-      });
-    // Check liked state from localStorage
-    const key = `liked_work_${workId}`;
-    if (localStorage.getItem(key)) setLiked(true);
+      .then((d: WorkComment[]) => { if (Array.isArray(d)) setCommentCount(d.length); });
+    if (localStorage.getItem(`liked_work_${workId}`)) setLiked(true);
   }, [workId]);
 
   const handleLike = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (liked) return;
-    // Optimistic
     setLikes(l => l + 1);
     setLiked(true);
     localStorage.setItem(`liked_work_${workId}`, "1");
-    // Like the first comment or just track at work level via a dummy call
-    // We store work-level likes separately via a dedicated endpoint
     await fetch(`/api/works/${workId}/like`, { method: "POST" });
   };
 
   return (
     <div className="flex items-center gap-4" onClick={e => e.stopPropagation()}>
-      {/* Like */}
       <button
         onClick={handleLike}
         className={`flex items-center gap-1.5 text-sm font-medium transition-all group ${liked ? "text-[#ff385c]" : "text-white/80 hover:text-[#ff385c]"}`}
       >
         {liked
           ? <FaHeart className="text-base text-[#ff385c] scale-110" />
-          : <FaRegHeart className="text-base group-hover:scale-110 transition-transform" />
-        }
+          : <FaRegHeart className="text-base group-hover:scale-110 transition-transform" />}
         <span>{likes}</span>
       </button>
-      {/* Comment */}
       <button
-        onClick={(e) => { e.stopPropagation(); onCommentClick(); }}
+        onClick={e => { e.stopPropagation(); onCommentClick(); }}
         className="flex items-center gap-1.5 text-sm font-medium text-white/80 hover:text-white transition-colors group"
       >
         <BiComment className="text-base group-hover:scale-110 transition-transform" />
@@ -82,42 +80,234 @@ export function WorkActionBar({ workId, initialLikes = 0, onCommentClick }: { wo
   );
 }
 
-// ── Full comment thread (inside modal) ───────────────────────────────────────
-export default function WorkComments({ workId, isAdmin = false }: { workId: string; isAdmin?: boolean }) {
+// ── TikTok-style single comment row ──────────────────────────────────────────
+function TikTokComment({
+  comment,
+  replies,
+  workId,
+  savedName,
+  likedIds,
+  onLike,
+  onDelete,
+  onReplyPosted,
+  isAdmin,
+  isReply = false,
+}: {
+  comment: WorkComment;
+  replies: WorkComment[];
+  workId: string;
+  savedName: string;
+  likedIds: Set<string>;
+  onLike: (id: string) => void;
+  onDelete: (id: string) => void;
+  onReplyPosted: (reply: WorkComment) => void;
+  isAdmin: boolean;
+  isReply?: boolean;
+}) {
+  const [showReplies, setShowReplies] = useState(false);
+  const [showReplyInput, setShowReplyInput] = useState(false);
+  const [replyText, setReplyText] = useState("");
+  const [posting, setPosting] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const submitReply = async () => {
+    const name = isAdmin ? "Bright Beautician" : savedName;
+    if (!replyText.trim() || !name) return;
+    setPosting(true);
+    try {
+      // Admin uses adminReply patch, users post a new comment with parentId
+      if (isAdmin) {
+        const res = await fetch(`/api/works/${workId}/comments/${comment._id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ adminReply: replyText.trim() }),
+        });
+        if (res.ok) { toast.success("Reply posted!"); setReplyText(""); setShowReplyInput(false); }
+      } else {
+        const res = await fetch(`/api/works/${workId}/comments`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, message: replyText.trim(), parentId: comment._id }),
+        });
+        const data = await res.json();
+        if (!res.ok) { toast.error(data.error || "Failed"); return; }
+        onReplyPosted(data);
+        setReplyText(""); setShowReplyInput(false);
+        setShowReplies(true);
+      }
+    } catch { toast.error("Something went wrong"); }
+    finally { setPosting(false); }
+  };
+
+  const isLiked = likedIds.has(comment._id);
+  const canDelete = isAdmin || comment.name === savedName;
+
+  return (
+    <div className={`${isReply ? "pl-10" : ""}`}>
+      {/* Main comment row */}
+      <div className="flex items-start gap-3 py-3">
+        {/* Avatar */}
+        <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0 ${avatarColor(comment.name)}`}>
+          {getInitials(comment.name)}
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-0.5">
+            <span className="font-semibold text-[13px] text-[#111]">{comment.name}</span>
+            {comment.name === "Bright Beautician" && (
+              <span className="text-[10px] bg-[#ff385c] text-white px-1.5 py-0.5 rounded-full font-medium">Owner</span>
+            )}
+            <span className="text-[11px] text-[#999]">{timeAgo(comment.createdAt)}</span>
+          </div>
+          <p className="text-[14px] text-[#222] leading-snug">{comment.message}</p>
+
+          {/* Admin reply shown inline */}
+          {comment.adminReply && (
+            <div className="mt-2 flex items-start gap-2">
+              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white font-bold text-[10px] flex-shrink-0 ${avatarColor("Bright Beautician")}`}>
+                B
+              </div>
+              <div>
+                <span className="text-[12px] font-semibold text-[#111] mr-1.5">Bright Beautician</span>
+                <span className="text-[10px] bg-[#ff385c] text-white px-1.5 py-0.5 rounded-full font-medium mr-1.5">Owner</span>
+                <p className="text-[13px] text-[#333] mt-0.5">{comment.adminReply}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Action row */}
+          <div className="flex items-center gap-4 mt-2">
+            <button
+              onClick={() => { setShowReplyInput(s => !s); setTimeout(() => inputRef.current?.focus(), 50); }}
+              className="text-[12px] text-[#999] hover:text-[#ff385c] font-medium transition-colors"
+            >
+              Reply
+            </button>
+            {!isReply && replies.length > 0 && (
+              <button
+                onClick={() => setShowReplies(s => !s)}
+                className="text-[12px] text-[#ff385c] font-medium flex items-center gap-1"
+              >
+                {showReplies ? "▴" : "▾"} {showReplies ? "Hide" : `View ${replies.length}`} {replies.length === 1 ? "reply" : "replies"}
+              </button>
+            )}
+            {canDelete && (
+              <button onClick={() => onDelete(comment._id)} className="text-[#ddd] hover:text-red-400 transition-colors ml-auto">
+                <FaTrash className="text-[11px]" />
+              </button>
+            )}
+          </div>
+
+          {/* Inline reply input */}
+          {showReplyInput && (
+            <div className="flex items-center gap-2 mt-2">
+              <input
+                ref={inputRef}
+                value={replyText}
+                onChange={e => setReplyText(e.target.value)}
+                onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); submitReply(); } }}
+                placeholder={isAdmin ? "Reply as Bright Beautician..." : `Reply as ${savedName}...`}
+                className="flex-1 bg-transparent border-b border-[#e0e0e0] focus:border-[#ff385c] outline-none text-[13px] py-1 text-[#222] placeholder:text-[#bbb] transition-colors"
+              />
+              <button
+                onClick={submitReply}
+                disabled={posting || !replyText.trim()}
+                className="text-[#ff385c] text-[13px] font-semibold disabled:opacity-40 transition-opacity"
+              >
+                {posting ? "..." : "Post"}
+              </button>
+              <button onClick={() => setShowReplyInput(false)} className="text-[#bbb] text-[13px]">✕</button>
+            </div>
+          )}
+        </div>
+
+        {/* Heart — far right, TikTok style */}
+        <button
+          onClick={() => onLike(comment._id)}
+          className="flex flex-col items-center gap-0.5 flex-shrink-0 ml-2"
+        >
+          {isLiked
+            ? <FaHeart className="text-[#ff385c] text-base" />
+            : <FaRegHeart className="text-[#999] text-base hover:text-[#ff385c] transition-colors" />}
+          {comment.likes > 0 && <span className="text-[10px] text-[#999]">{comment.likes}</span>}
+        </button>
+      </div>
+
+      {/* Nested replies */}
+      {!isReply && showReplies && replies.length > 0 && (
+        <div className="border-l-2 border-[#f0f0f0] ml-4 pl-2">
+          {replies.map(r => (
+            <TikTokComment
+              key={r._id}
+              comment={r}
+              replies={[]}
+              workId={workId}
+              savedName={savedName}
+              likedIds={likedIds}
+              onLike={onLike}
+              onDelete={onDelete}
+              onReplyPosted={onReplyPosted}
+              isAdmin={isAdmin}
+              isReply
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Main WorkComments component ───────────────────────────────────────────────
+export default function WorkComments({
+  workId,
+  isAdmin = false,
+}: {
+  workId: string;
+  isAdmin?: boolean;
+}) {
   const [comments, setComments] = useState<WorkComment[]>([]);
-  const [name, setName] = useState("");
+  const [savedName, setSavedName] = useState("");
+  const [nameInput, setNameInput] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [replyId, setReplyId] = useState<string | null>(null);
-  const [replyText, setReplyText] = useState("");
   const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    const stored = localStorage.getItem(NAME_KEY);
+    if (stored) setSavedName(stored);
     fetch(`/api/works/${workId}/comments`)
       .then(r => r.json())
       .then(d => { if (Array.isArray(d)) setComments(d); });
-    // Restore liked state
     const liked = new Set<string>();
     Object.keys(localStorage).forEach(k => {
-      if (k.startsWith(`liked_comment_`)) liked.add(k.replace("liked_comment_", ""));
+      if (k.startsWith("liked_comment_")) liked.add(k.replace("liked_comment_", ""));
     });
     setLikedIds(liked);
   }, [workId]);
 
+  const saveName = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!nameInput.trim()) return;
+    localStorage.setItem(NAME_KEY, nameInput.trim());
+    setSavedName(nameInput.trim());
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !message.trim()) return;
+    if (!message.trim() || (!savedName && !isAdmin)) return;
     setLoading(true);
     try {
       const res = await fetch(`/api/works/${workId}/comments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, message }),
+        body: JSON.stringify({ name: isAdmin ? "Bright Beautician" : savedName, message: message.trim() }),
       });
       const data = await res.json();
       if (!res.ok) { toast.error(data.error || "Failed"); return; }
       setComments(c => [data, ...c]);
-      setName(""); setMessage("");
+      setMessage("");
     } catch { toast.error("Something went wrong"); }
     finally { setLoading(false); }
   };
@@ -137,138 +327,95 @@ export default function WorkComments({ workId, isAdmin = false }: { workId: stri
     }
   };
 
-  const handleReply = async (id: string) => {
-    if (!replyText.trim()) return;
-    const res = await fetch(`/api/works/${workId}/comments/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ adminReply: replyText }),
-    });
-    if (res.ok) {
-      const updated = await res.json();
-      setComments(c => c.map(x => x._id === id ? updated : x));
-      setReplyId(null); setReplyText("");
-      toast.success("Reply posted!");
-    }
-  };
-
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this comment?")) return;
     const res = await fetch(`/api/works/${workId}/comments/${id}`, { method: "DELETE" });
-    if (res.ok) {
-      setComments(c => c.filter(x => x._id !== id));
-      toast.success("Deleted");
-    }
+    if (res.ok) { setComments(c => c.filter(x => x._id !== id)); toast.success("Deleted"); }
   };
+
+  const handleReplyPosted = (reply: WorkComment) => {
+    setComments(c => [...c, reply]);
+  };
+
+  // Separate top-level from replies
+  const topLevel = comments.filter(c => !c.parentId);
+  const getReplies = (parentId: string) => comments.filter(c => c.parentId === parentId);
+
+  const displayName = isAdmin ? "Bright Beautician" : savedName;
 
   return (
     <div>
+      {/* Name setup — first time only */}
+      {!savedName && !isAdmin && (
+        <form onSubmit={saveName} className="flex items-center gap-2 mb-3 pb-3 border-b border-[#f5f5f5]">
+          <div className="w-8 h-8 rounded-full bg-[#f0f0f0] flex items-center justify-center text-[#999] text-lg flex-shrink-0">?</div>
+          <input
+            value={nameInput}
+            onChange={e => setNameInput(e.target.value)}
+            placeholder="Enter your name to comment..."
+            autoFocus
+            className="flex-1 bg-transparent border-b border-[#e0e0e0] focus:border-[#ff385c] outline-none text-[13px] py-1 text-[#222] placeholder:text-[#bbb] transition-colors"
+          />
+          <button
+            type="submit"
+            disabled={!nameInput.trim()}
+            className="text-[#ff385c] text-[13px] font-semibold disabled:opacity-40"
+          >
+            Done
+          </button>
+        </form>
+      )}
+
       {/* Compose box */}
-      <form onSubmit={handleSubmit} className="flex flex-col gap-2 pb-4 border-b border-[#e8e8e8] mb-4">
-        <div className="flex gap-2">
-          <div className="w-8 h-8 rounded-full bg-[#ff385c]/20 flex items-center justify-center text-[#ff385c] font-bold text-sm flex-shrink-0">
-            ?
+      {(savedName || isAdmin) && (
+        <form onSubmit={handleSubmit} className="flex items-center gap-3 mb-3 pb-3 border-b border-[#f5f5f5]">
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-xs flex-shrink-0 ${avatarColor(displayName)}`}>
+            {getInitials(displayName)}
           </div>
-          <div className="flex-1 flex flex-col gap-2">
-            <input
-              value={name}
-              onChange={e => setName(e.target.value)}
-              placeholder="Your name"
-              className="w-full rounded-full border border-[#e8e8e8] bg-[#f7f7f7] px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#ff385c]"
-            />
-            <input
-              value={message}
-              onChange={e => setMessage(e.target.value)}
-              placeholder="Post your reply"
-              className="w-full rounded-full border border-[#e8e8e8] bg-[#f7f7f7] px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#ff385c]"
-            />
-          </div>
-        </div>
-        <div className="flex justify-end">
-          <Button type="submit" variant="brand" size="sm" className="rounded-full px-5 text-xs" disabled={loading || !name.trim() || !message.trim()}>
-            {loading ? "Posting..." : "Reply"}
-          </Button>
-        </div>
-      </form>
+          <input
+            ref={inputRef}
+            value={message}
+            onChange={e => setMessage(e.target.value)}
+            onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSubmit(e as unknown as React.FormEvent); } }}
+            placeholder={`Add a comment as ${displayName}...`}
+            className="flex-1 bg-transparent border-b border-[#e0e0e0] focus:border-[#ff385c] outline-none text-[13px] py-1 text-[#222] placeholder:text-[#bbb] transition-colors"
+          />
+          <button
+            type="submit"
+            disabled={loading || !message.trim()}
+            className="text-[#ff385c] text-[13px] font-semibold disabled:opacity-40 flex-shrink-0"
+          >
+            {loading ? "..." : "Post"}
+          </button>
+          {savedName && !isAdmin && (
+            <button
+              type="button"
+              onClick={() => { localStorage.removeItem(NAME_KEY); setSavedName(""); }}
+              className="text-[#ccc] hover:text-[#999] text-[11px] flex-shrink-0"
+              title="Change name"
+            >✎</button>
+          )}
+        </form>
+      )}
 
-      {/* Thread */}
-      <div className="flex flex-col divide-y divide-[#f0f0f0]">
-        {comments.length === 0 && (
-          <p className="text-sm text-[#6a6a6a] text-center py-6">No comments yet. Be the first!</p>
+      {/* Comment thread */}
+      <div className="divide-y divide-[#f8f8f8]">
+        {topLevel.length === 0 && (
+          <p className="text-[13px] text-[#bbb] text-center py-6">No comments yet. Be the first! 💬</p>
         )}
-        {comments.map(c => (
-          <div key={c._id} className="py-3 flex gap-3">
-            {/* Avatar */}
-            <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0 ${avatarColor(c.name)}`}>
-              {getInitials(c.name)}
-            </div>
-
-            <div className="flex-1 min-w-0">
-              {/* Name + time */}
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-bold text-sm text-[#222]">{c.name}</span>
-                <span className="text-xs text-[#6a6a6a]">· {timeAgo(c.createdAt)}</span>
-                {isAdmin && (
-                  <button onClick={() => handleDelete(c._id)} className="ml-auto text-[#6a6a6a] hover:text-red-500 transition-colors">
-                    <FaTrash className="text-xs" />
-                  </button>
-                )}
-              </div>
-
-              {/* Message */}
-              <p className="text-sm text-[#222] mt-0.5 leading-relaxed">{c.message}</p>
-
-              {/* Admin reply */}
-              {c.adminReply && (
-                <div className="mt-2 pl-3 border-l-2 border-[#ff385c] bg-[#fff5f7] rounded-r-lg py-1.5 pr-2">
-                  <p className="text-[11px] font-semibold text-[#ff385c] mb-0.5">Sofia ✓</p>
-                  <p className="text-xs text-[#444]">{c.adminReply}</p>
-                </div>
-              )}
-
-              {/* Twitter-style action row */}
-              <div className="flex items-center gap-5 mt-2">
-                {/* Like */}
-                <button
-                  onClick={() => handleLike(c._id)}
-                  className={`flex items-center gap-1.5 text-xs transition-all group ${likedIds.has(c._id) ? "text-[#ff385c]" : "text-[#6a6a6a] hover:text-[#ff385c]"}`}
-                >
-                  {likedIds.has(c._id)
-                    ? <FaHeart className="text-sm" />
-                    : <FaRegHeart className="text-sm group-hover:scale-110 transition-transform" />
-                  }
-                  <span className="font-medium">{c.likes > 0 ? c.likes : ""}</span>
-                </button>
-
-                {/* Admin reply button */}
-                {isAdmin && (
-                  <button
-                    onClick={() => { setReplyId(replyId === c._id ? null : c._id); setReplyText(""); }}
-                    className="flex items-center gap-1.5 text-xs text-[#6a6a6a] hover:text-[#ff385c] transition-colors group"
-                  >
-                    <FaReply className="text-sm group-hover:scale-110 transition-transform" />
-                    <span className="font-medium">Reply</span>
-                  </button>
-                )}
-              </div>
-
-              {/* Admin reply input */}
-              {isAdmin && replyId === c._id && (
-                <div className="flex gap-2 mt-3">
-                  <input
-                    value={replyText}
-                    onChange={e => setReplyText(e.target.value)}
-                    placeholder="Reply as Sofia..."
-                    autoFocus
-                    className="flex-1 rounded-full border border-[#e8e8e8] bg-[#f7f7f7] px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#ff385c]"
-                  />
-                  <Button size="sm" variant="brand" className="rounded-full text-xs px-4 h-7" onClick={() => handleReply(c._id)}>
-                    Send
-                  </Button>
-                </div>
-              )}
-            </div>
-          </div>
+        {topLevel.map(c => (
+          <TikTokComment
+            key={c._id}
+            comment={c}
+            replies={getReplies(c._id)}
+            workId={workId}
+            savedName={savedName}
+            likedIds={likedIds}
+            onLike={handleLike}
+            onDelete={handleDelete}
+            onReplyPosted={handleReplyPosted}
+            isAdmin={isAdmin}
+          />
         ))}
       </div>
     </div>

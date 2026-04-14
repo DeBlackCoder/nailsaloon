@@ -12,10 +12,10 @@ export default function HeroSection() {
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
       style={{ height: "100dvh", paddingTop: "120px" }}
     >
-      {/* Background image */}
+      {/* Background image — African hair braiding */}
       <div
         className="absolute inset-0 bg-cover bg-center animate-hero-fade-in"
-        style={{ backgroundImage: "url('/hero-nail.jpg')" }}
+        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=1600&q=80')" }}
       />
       {/* Dark gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
@@ -27,14 +27,14 @@ export default function HeroSection() {
           className="text-4xl sm:text-5xl md:text-7xl font-bold mb-4 animate-hero-slide-up"
           style={{ animationDelay: "0.1s" }}
         >
-          Nail Studio
+          Bright Beautician
         </h1>
         <p
           data-testid="hero-tagline"
           className="text-lg md:text-2xl text-white/90 mb-8 animate-hero-slide-up"
           style={{ animationDelay: "0.25s" }}
         >
-          Where Beauty Meets Precision
+          Where Every Strand Tells Your Story
         </p>
 
         <div
@@ -74,7 +74,7 @@ export default function HeroSection() {
           <div className="w-px h-4 bg-white/30 hidden sm:block" />
           <div className="flex items-center gap-1.5">
             <FaTrophy className="text-amber-400" />
-            <span>5+ years experience</span>
+            <span>8+ years experience</span>
           </div>
           <div className="w-px h-4 bg-white/30 hidden sm:block" />
           <div className="flex items-center gap-1.5">

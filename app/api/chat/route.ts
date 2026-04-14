@@ -55,5 +55,23 @@ export async function POST(req: NextRequest) {
     sender: body.sender,
     type: body.type || "text",
   });
+
+  // Notify Sofia via Ntfy when a client sends a message
+  if (body.sender === "client" && process.env.NTFY_TOPIC) {
+    const isImage = body.type === "image";
+    const isSticker = body.type === "sticker";
+    const preview = isImage ? "📷 Sent an image" : isSticker ? "🎭 Sent a sticker" : body.message.trim();
+    fetch(`https://ntfy.sh/${process.env.NTFY_TOPIC}`, {
+      method: "POST",
+      headers: {
+        "Title": `💅 New message from ${body.clientName}`,
+        "Priority": "high",
+        "Tags": "nail_care",
+        "Content-Type": "text/plain",
+      },
+      body: preview,
+    }).catch(() => {}); // fire-and-forget, don't block the response
+  }
+
   return NextResponse.json(msg, { status: 201 });
 }

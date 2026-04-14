@@ -1,10 +1,10 @@
-import { GiNails } from "react-icons/gi";
+import { GiHairStrands } from "react-icons/gi";
 import { FaWhatsapp, FaInstagram, FaPhone } from "react-icons/fa";
 
 const PHONE = "+1 (555) 123-4567";
 const WHATSAPP_URL = "https://wa.me/15551234567";
-const INSTAGRAM_URL = "https://instagram.com/luxenailsbysofia";
-const INSTAGRAM_HANDLE = "@luxenailsbysofia";
+const INSTAGRAM_URL = "https://instagram.com/brightbeautician";
+const INSTAGRAM_HANDLE = "@brightbeautician";
 
 const NAV_LINKS = [
   { label: "Home",     href: "#home" },
@@ -16,10 +16,10 @@ const NAV_LINKS = [
 ];
 
 const SERVICES = [
-  { name: "Acrylic Extensions", price: "$45" },
-  { name: "Gel Polish",         price: "$35" },
-  { name: "Pedicure",           price: "$40" },
-  { name: "Nail Art",           price: "$55" },
+  { name: "Box Braids",      price: "$80"  },
+  { name: "Knotless Braids", price: "$100" },
+  { name: "Weave & Sew-In",  price: "$120" },
+  { name: "Loc Styling",     price: "$60"  },
 ];
 
 export default function Footer() {
@@ -32,13 +32,13 @@ export default function Footer() {
         {/* Brand */}
         <div className="lg:col-span-1">
           <div className="flex items-center gap-2 mb-4">
-            <GiNails className="text-2xl text-[#ff385c]" />
+            <GiHairStrands className="text-2xl text-[#ff385c]" />
             <span className="text-white font-bold text-lg tracking-tight" style={{ letterSpacing: "-0.18px" }}>
-              Nail Studio
+              Bright Beautician
             </span>
           </div>
           <p className="text-white/60 text-sm leading-relaxed mb-5">
-            Premium nail care by Sofia — where beauty meets precision. Book your appointment today.
+            Premium hair braiding & styling — where every strand tells your story. Book your appointment today.
           </p>
           <div className="flex items-center gap-3">
             <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
@@ -119,7 +119,7 @@ export default function Footer() {
 
       <div className="border-t border-white/10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-white/40 text-xs">© {year} Nail Studio by Sofia. All rights reserved.</p>
+          <p className="text-white/40 text-xs">© {year} Bright Beautician. All rights reserved.</p>
           <p className="text-white/30 text-xs">
             Powered by{" "}
             <a href="https://avulextech.site" target="_blank" rel="noopener noreferrer"

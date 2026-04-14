@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { FaTimes, FaCommentDots, FaPaperPlane } from "react-icons/fa";
-import { GiNails } from "react-icons/gi";
+import { GiHairStrands } from "react-icons/gi";
 import { toast } from "sonner";
 
 const EMOJIS = [
@@ -218,11 +218,11 @@ export default function ClientChat() {
           {/* Header — WhatsApp green */}
           <div className="bg-[#222222] px-4 py-3 flex items-center gap-3 flex-shrink-0">
             <div className="w-9 h-9 rounded-full bg-[#333333] flex items-center justify-center">
-              <GiNails className="text-white text-lg" />
+              <GiHairStrands className="text-white text-lg" />
             </div>
             <div>
-              <p className="text-white font-semibold text-sm">Nail Studio</p>
-              <p className="text-white/70 text-xs">Sofia · Usually replies fast</p>
+              <p className="text-white font-semibold text-sm">Bright Beautician</p>
+              <p className="text-white/70 text-xs">Usually replies fast</p>
             </div>
             <button onClick={() => setOpen(false)} className="ml-auto text-white/70 hover:text-white">
               <FaTimes />

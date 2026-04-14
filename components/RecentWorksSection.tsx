@@ -1,8 +1,6 @@
-import Image from "next/image";
-import { Badge } from "@/components/ui/badge";
 import RecentWorksClient from "@/components/RecentWorksClient";
 
-interface Work { _id: string; title: string; description: string; imageUrl: string; serviceType?: string; price?: string; }
+interface Work { _id: string; title: string; description: string; imageUrl: string; serviceType?: string; price?: string; likes?: number; }
 
 async function getWorks(): Promise<Work[]> {
   try {
@@ -17,6 +15,5 @@ async function getWorks(): Promise<Work[]> {
 
 export default async function RecentWorksSection() {
   const works = await getWorks();
-  if (!works || works.length === 0) return null;
   return <RecentWorksClient works={works} />;
 }
