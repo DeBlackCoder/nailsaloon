@@ -35,7 +35,7 @@ export default function AdminDashboardClient() {
             </a>
             <button
               onClick={handleLogout}
-              className="text-sm text-[#6a6a6a] hover:text-red-500 transition-colors font-medium"
+              className="text-sm font-medium px-3 py-1.5 rounded-full border border-red-200 text-red-500 hover:bg-red-50 transition-colors"
             >
               Logout
             </button>
